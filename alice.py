@@ -4,7 +4,7 @@ from random import randrange
 from encryptionlib import decrypt
 
 # public variables
-public_modulus_p = 2312
+public_modulus_p = 23122312231223122312
 public_base_g = 5
 
 alice_secret = randrange(1000, 2000)
