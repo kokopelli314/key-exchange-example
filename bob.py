@@ -1,16 +1,18 @@
 from multiprocessing.connection import Client
+from random import randrange
 
 from encryptionlib import encrypt
 
-public_modulus_p = 23
+public_modulus_p = 2312
 public_base_g = 5
 
-bob_secret = 3
+bob_secret = randrange(1000, 2000)
 bob_public = (public_base_g ** bob_secret) % public_modulus_p
 
 def begin(port):
     conn = Client(('localhost', port))
     print('Bob connected to port', port)
+    print('Bob\'s secret:', bob_secret)
     conn.send('public:' + str(bob_public))
     response = conn.recv()
     alice_public_key = int(response.split('public:')[1])
