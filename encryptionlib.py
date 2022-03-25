@@ -1,11 +1,14 @@
+def int_to_bytes(val: int) -> bytes:
+    return val.to_bytes((val.bit_length() + 7) // 8, 'big')
+
 # super duper simple encryption via XOR. not so secure!
 def encrypt(msg: str, key: int):
-    key_bytes = key.to_bytes((key.bit_length() + 7) // 8, 'big')
+    key_bytes = int_to_bytes(key)
     enc_bytes = xor_bytes(msg.encode('utf-8'), key_bytes)
     return enc_bytes
 
 def decrypt(msg: bytes, key: int) -> bytes:
-    key_bytes = key.to_bytes((key.bit_length() + 7) // 8, 'big')
+    key_bytes = int_to_bytes(key)
     decrypted_bytes = xor_bytes(msg, key_bytes)
     return decrypted_bytes
 

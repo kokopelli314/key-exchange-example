@@ -1,29 +1,36 @@
 from multiprocessing.connection import Client
 from random import randrange
 
-from encryptionlib import encrypt
+from encryptionlib import encrypt, int_to_bytes
 
 public_modulus_p = 23122312231223122312
 public_base_g = 5
 
-bob_secret = randrange(1000, 2000)
+bob_secret = randrange(1, 10)
 bob_public = (public_base_g ** bob_secret) % public_modulus_p
+encryption_key = None # To be determined in handshake
 
 def begin(port):
     conn = Client(('localhost', port))
     print('Bob connected to port', port)
-    print('Bob\'s secret:', bob_secret)
+
+    print('\nBob\'s secret:', bob_secret)
+    print('--- Decimal:\t' + str(bob_secret))
+    print('--- Bytes:\t' + str(int_to_bytes(bob_secret)))
+
     conn.send('public:' + str(bob_public))
     response = conn.recv()
     alice_public_key = int(response.split('public:')[1])
-    print('Bob received Alice\'s public key:', alice_public_key)
+    print('\nBob received Alice\'s public key:', alice_public_key)
 
-    secret_key = (alice_public_key ** bob_secret) % public_modulus_p
-    print('Bob generated secret key:', secret_key)
+    encryption_key = (alice_public_key ** bob_secret) % public_modulus_p
+    print('\bBob generated secret key:')
+    print('--- Decimal:\t' + str(encryption_key))
+    print('--- Bytes:\t' + str(int_to_bytes(encryption_key)))
 
     while True:
         input_text = input('> ')
-        conn.send(encrypt(input_text, secret_key))
+        conn.send(encrypt(input_text, encryption_key))
         if input_text == 'close':
             break
 
